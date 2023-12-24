@@ -1,0 +1,106 @@
+type Activity = record {
+  id : nat64;
+  duration : nat32;
+  cost : float64;
+  name : text;
+  description : text;
+  location : nat64;
+};
+type ActivityPayload = record {
+  duration : nat32;
+  cost : float64;
+  name : text;
+  description : text;
+  location : nat64;
+};
+type Error = variant { NotFound : record { msg : text } };
+type Location = record {
+  id : nat64;
+  country : text;
+  name : text;
+  site : text;
+  activities : vec Activity;
+  description : text;
+};
+type LocationPayload = record {
+  country : text;
+  name : text;
+  site : text;
+  description : text;
+};
+type Result = variant { Ok : Activity; Err : Error };
+type Result_1 = variant { Ok; Err : Error };
+type Result_10 = variant { Ok : vec Trip; Err : Error };
+type Result_2 = variant { Ok : Location; Err : Error };
+type Result_3 = variant { Ok : Transportation; Err : Error };
+type Result_4 = variant { Ok : Trip; Err : Error };
+type Result_5 = variant { Ok : vec Activity; Err : Error };
+type Result_6 = variant { Ok : vec Location; Err : Error };
+type Result_7 = variant { Ok : float64; Err : Error };
+type Result_8 = variant { Ok : nat32; Err : Error };
+type Result_9 = variant { Ok : vec Transportation; Err : Error };
+type Transportation = record {
+  id : nat64;
+  to : nat64;
+  type_ : text;
+  cost : float64;
+  date : text;
+  from : nat64;
+};
+type TransportationPayload = record {
+  to : nat64;
+  type_ : text;
+  cost : float64;
+  date : text;
+  from : nat64;
+};
+type Trip = record {
+  id : nat64;
+  transportation : vec Transportation;
+  name : text;
+  activities : vec Activity;
+  end_date : text;
+  start_date : text;
+  destinations : vec Location;
+  budget : float64;
+};
+type TripPayload = record {
+  name : text;
+  end_date : text;
+  start_date : text;
+  budget : float64;
+};
+service : {
+  add_activity : (ActivityPayload) -> (Result);
+  add_activity_to_location : (nat64, nat64) -> (Result_1);
+  add_activity_to_trip : (nat64, nat64) -> (Result_1);
+  add_destination_to_trip : (nat64, nat64) -> (Result_1);
+  add_location : (LocationPayload) -> (Result_2);
+  add_transportation : (TransportationPayload) -> (Result_3);
+  add_transportation_to_trip : (nat64, nat64) -> (Result_1);
+  add_trip : (TripPayload) -> (Result_4);
+  delete_activity : (nat64) -> (Result_1);
+  delete_location : (nat64) -> (Result_1);
+  delete_transportation : (nat64) -> (Result_1);
+  delete_trip : (nat64) -> (Result_1);
+  get_activities : () -> (Result_5) query;
+  get_activities_for_location : (nat64) -> (Result_5) query;
+  get_activities_for_trip : (nat64) -> (Result_5) query;
+  get_activity_by_id : (nat64) -> (Result) query;
+  get_destinations_for_trip : (nat64) -> (Result_6) query;
+  get_location_by_id : (nat64) -> (Result_2) query;
+  get_locations : () -> (Result_6) query;
+  get_total_activity_cost : (nat64) -> (Result_7) query;
+  get_total_cost : (nat64) -> (Result_7) query;
+  get_total_duration : (nat64) -> (Result_8) query;
+  get_total_transportation_cost : (nat64) -> (Result_7) query;
+  get_transportation_by_id : (nat64) -> (Result_3) query;
+  get_transportation_for_trip : (nat64) -> (Result_9) query;
+  get_transportations : () -> (Result_9) query;
+  get_trip_by_id : (nat64) -> (Result_4) query;
+  get_trips : () -> (Result_10) query;
+  update_activity : (nat64, ActivityPayload) -> (Result);
+  update_location : (nat64, LocationPayload) -> (Result_2);
+  update_transportation : (nat64, TransportationPayload) -> (Result_3);
+  update_trip : (nat64, TripPayload) -> (Result_4);
+}

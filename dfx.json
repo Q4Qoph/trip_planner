@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "trip_planner_backend": {
+      "candid": "src/trip_planner_backend/trip_planner_backend.did",
+      "package": "trip_planner_backend",
+      "type": "rust"
+    },
+    "trip_planner_frontend": {
+      "dependencies": [
+        "trip_planner_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/trip_planner_frontend/src/index.html"
+      },
+      "source": [
+        "src/trip_planner_frontend/assets",
+        "dist/trip_planner_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
