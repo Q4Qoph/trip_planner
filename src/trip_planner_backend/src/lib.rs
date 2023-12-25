@@ -1,16 +1,15 @@
 #[macro_use]
 extern crate serde;
+
 use candid::{Decode, Encode};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 use ic_stable_structures::{BoundedStorable, Cell, DefaultMemoryImpl, StableBTreeMap, Storable};
 use std::{borrow::Cow, cell::RefCell};
 
-
-type Memory = VirtualMemory<DefaultMemoryImpl>; 
+type Memory = VirtualMemory<DefaultMemoryImpl>;
 type IdCell = Cell<u64, Memory>;
 
-#[derive (candid::CandidType, Clone,Serialize, Deserialize)]
-//struct for Locations 
+#[derive(candid::CandidType, Clone, Serialize, Deserialize)]
 struct Location {
     id: u64,
     name: String,
@@ -20,19 +19,19 @@ struct Location {
     activities: Vec<Activity>,
 }
 
-#[derive (candid::CandidType, Clone,Serialize, Deserialize)]
-// struct for Activities
+#[derive(candid::CandidType, Clone, Serialize, Deserialize)]
 struct Activity {
-    id:u64,
+    id: u64,
     name: String,
     duration: u32,
     cost: f64,
     description: String,
     location: u64,
 }
-#[derive (candid::CandidType, Clone,Serialize, Deserialize)]
+
+#[derive(candid::CandidType, Clone, Serialize, Deserialize)]
 struct Trip {
-    id:u64,
+    id: u64,
     name: String,
     start_date: String,
     end_date: String,
@@ -42,10 +41,9 @@ struct Trip {
     transportation: Vec<Transportation>,
 }
 
-#[derive (candid::CandidType, Clone,Serialize, Deserialize)]
-// struct for transportation
+#[derive(candid::CandidType, Clone, Serialize, Deserialize)]
 struct Transportation {
-    id:u64,
+    id: u64,
     type_: String,
     from: u64,
     to: u64,
@@ -53,68 +51,64 @@ struct Transportation {
     date: String,
 }
 
-// Implement the Storable and BoundedStorable traits for the Location struct
 impl Storable for Location {
-    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-      Cow::Owned(Encode!(self).unwrap())
-  }
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
 
-  fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-      Decode!(bytes.as_ref(), Self).unwrap()
-  }
+    fn from_bytes(bytes: Cow<[u8]>) -> Result<Self, candid::Error> {
+        Decode!(bytes.as_ref(), Self)
+    }
 }
 
-impl  BoundedStorable for Location {
-   const MAX_SIZE: u32 = 1024;
-  const IS_FIXED_SIZE: bool = false;
+impl BoundedStorable for Location {
+    const MAX_SIZE: u32 = 1024;
+    const IS_FIXED_SIZE: bool = false;
 }
 
-// Implement the Storable and BoundedStorable traits for the Activity struct
 impl Storable for Activity {
-    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-      Cow::Owned(Encode!(self).unwrap())
-  }
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
 
-  fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-      Decode!(bytes.as_ref(), Self).unwrap()
-  }
+    fn from_bytes(bytes: Cow<[u8]>) -> Result<Self, candid::Error> {
+        Decode!(bytes.as_ref(), Self)
+    }
 }
 
-impl  BoundedStorable for Activity {
-   const MAX_SIZE: u32 = 1024;
-  const IS_FIXED_SIZE: bool = false;
+impl BoundedStorable for Activity {
+    const MAX_SIZE: u32 = 1024;
+    const IS_FIXED_SIZE: bool = false;
 }
 
-// Implement the Storable and BoundedStorable traits for the Trip struct
 impl Storable for Trip {
-    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-      Cow::Owned(Encode!(self).unwrap())
-  }
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
 
-  fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-      Decode!(bytes.as_ref(), Self).unwrap()
-  }
+    fn from_bytes(bytes: Cow<[u8]>) -> Result<Self, candid::Error> {
+        Decode!(bytes.as_ref(), Self)
+    }
 }
 
-impl  BoundedStorable for Trip {
-   const MAX_SIZE: u32 = 1024;
-  const IS_FIXED_SIZE: bool = false;
+impl BoundedStorable for Trip {
+    const MAX_SIZE: u32 = 1024;
+    const IS_FIXED_SIZE: bool = false;
 }
 
-// Implement the Storable and BoundedStorable traits for the Transportation struct
 impl Storable for Transportation {
-    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-      Cow::Owned(Encode!(self).unwrap())
-  }
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
 
-  fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-      Decode!(bytes.as_ref(), Self).unwrap()
-  }
+    fn from_bytes(bytes: Cow<[u8]>) -> Result<Self, candid::Error> {
+        Decode!(bytes.as_ref(), Self)
+    }
 }
 
-impl  BoundedStorable for Transportation {
-   const MAX_SIZE: u32 = 1024;
-  const IS_FIXED_SIZE: bool = false;
+impl BoundedStorable for Transportation {
+    const MAX_SIZE: u32 = 1024;
+    const IS_FIXED_SIZE: bool = false;
 }
 
 thread_local! {
@@ -149,10 +143,7 @@ thread_local! {
     static TRANSPORTATION_STR: RefCell<StableBTreeMap<u64, Transportation, Memory>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(7))))
     );
-
-
 }
-
 
 // location payload
 #[derive(candid::CandidType,Serialize, Deserialize)]
